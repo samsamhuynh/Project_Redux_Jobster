@@ -2,38 +2,52 @@ import { FormRow, FormRowSelect } from '../../components';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import { handleChange } from '../../features/job/jobSlice';
+import { handleChange, clearValues, createJob } from '../../features/job/jobSlice';
+import { useEffect } from 'react';
 
 const AddJob = () => {
     const {
-        isLoading,
-        position,
-        company,
-        jobLocation,
-        jobType,
-        jobTypeOptions,
-        status,
-        statusOptions,
-        isEditing,
-        editJobId,
-    } = useSelector((store) => store.job);
+            isLoading,
+            position,
+            company,
+            jobLocation,
+            jobType,
+            jobTypeOptions,
+            status,
+            statusOptions,
+            isEditing,
+            editJobId,
+        } = useSelector((store) => store.job);
 
-    const disabled = useDispatch();
+        const { user } = useSelector((store) => store.user);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+        const dispatch = useDispatch();
 
-        if (!position || !company || !jobLocation) {
-            toast.error('Please fill in all fields');
-            return;
-        }
-    };
+        const handleSubmit = (e) => {
+            e.preventDefault();
 
-    const handleJobInput = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        disabled(handleChange({name, value}));
-    };
+            if (!position || !company || !jobLocation) {
+                toast.error('Please fill in all fields');
+                return;
+            }
+
+            dispatch(createJob({position, company, jobLocation, jobType, status}))
+        };
+
+        const handleJobInput = (e) => {
+            const name = e.target.name;
+            const value = e.target.value;
+            dispatch(handleChange({ name, value }));
+        };
+
+        useEffect(() => {
+            dispatch(
+                handleChange({
+                    name: 'jobLocation',
+                    value: user.location,
+                })
+            );
+        }, []);
 
     return (
         <Wrapper>
@@ -87,7 +101,7 @@ const AddJob = () => {
                         <button
                             type='button'
                             className='btn btn-block clear-btn'
-                            onClick={() => console.log('clear values')}
+                            onClick={() => dispatch(clearValues())}
                         >
                             clear
                         </button>
