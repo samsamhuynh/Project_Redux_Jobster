@@ -8,6 +8,5 @@ export const store = configureStore({
         user: userSlice,
         job: jobSlice,
         allJobs: allJobsSlice,
-    }
-})
-
+    },
+});
