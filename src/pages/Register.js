@@ -1,110 +1,119 @@
-import { useState, useEffect } from 'react';
-import { Logo, FormRow } from '../components';
-import Wrapper from '../assets/wrappers/RegisterPage';
-import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, registerUser } from '../features/user/userSlice';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Logo, FormRow } from "../components";
+import Wrapper from "../assets/wrappers/RegisterPage";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, registerUser } from "../features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
-    name: '',
-    email: '',
-    password: '',
-    isMember: true,
+  name: "",
+  email: "",
+  password: "",
+  isMember: true,
 };
 
 function Register() {
-    const [values, setValue] = useState(initialState);
-    const {user, isLoading} = useSelector(store => store.user);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const [values, setValue] = useState(initialState);
+  const { user, isLoading } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        console.log(`${name}:${value}`);
-        setValue({...values, [name]: value})
-    };
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    console.log(`${name}:${value}`);
+    setValue({ ...values, [name]: value });
+  };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        const { name, email, password, isMember } = values
-        if (!email || !password || (!isMember && !name)) {
-            toast.error('Please fill out all fields');
-            return;
-        }
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const { name, email, password, isMember } = values;
+    if (!email || !password || (!isMember && !name)) {
+      toast.error("Please fill out all fields");
+      return;
+    }
 
-        if (isMember) {
-            dispatch(loginUser({ email: email, password: password }));
-            return;
-        }
+    if (isMember) {
+      dispatch(loginUser({ email: email, password: password }));
+      return;
+    }
 
-        dispatch(registerUser({ name, email, password }));
-    };
+    dispatch(registerUser({ name, email, password }));
+  };
 
-    const toggleMember = () => {
-        setValue({ ...values, isMember: !values.isMember });
-    };
+  const toggleMember = () => {
+    setValue({ ...values, isMember: !values.isMember });
+  };
 
-    useEffect(() => {
-        if (user) {
-            setTimeout(() => {
-                navigate('/');
-            }, 2000);
-        }
-    }, [user]);
+  useEffect(() => {
+    if (user) {
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    }
+  }, [user]);
 
-    return (
-    <Wrapper className='full-page'>
-        <form className='form' onSubmit={onSubmit}>
-            <Logo />
+  return (
+    <Wrapper className="full-page">
+      <form className="form" onSubmit={onSubmit}>
+        <Logo />
 
-            <h3>{values.isMember ? 'Login' : 'Register'}</h3>
+        <h3>{values.isMember ? "Login" : "Register"}</h3>
 
-            {/* name field */}
-            {!values.isMember && (
-                <FormRow
-                    type='text'
-                    name="name"
-                    value={values.name}
-                    handleChange={handleChange}
-                />
-            )}
+        {/* name field */}
+        {!values.isMember && (
+          <FormRow
+            type="text"
+            name="name"
+            value={values.name}
+            handleChange={handleChange}
+          />
+        )}
 
-            {/* email field */}
-            <FormRow
-                type='email'
-                name="email"
-                value={values.email}
-                handleChange={handleChange}
-            />
+        {/* email field */}
+        <FormRow
+          type="email"
+          name="email"
+          value={values.email}
+          handleChange={handleChange}
+        />
 
-            {/* password field */}
-            <FormRow
-                type='password'
-                name="password"
-                value={values.password}
-                handleChange={handleChange}
-            />
+        {/* password field */}
+        <FormRow
+          type="password"
+          name="password"
+          value={values.password}
+          handleChange={handleChange}
+        />
 
-            <button type='submit' className='btn btn-block' disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'submit'}
-            </button>
+        <button type="submit" className="btn btn-block" disabled={isLoading}>
+          {isLoading ? "Loading..." : "submit"}
+        </button>
 
-            <p>
-                {values.isMember ? 'Not a member yet?' : ' Already a member?'}
+        <button
+          type="button"
+          className="btn btn-block btn-hipster"
+          disabled={isLoading}
+          onClick={() =>
+            dispatch(
+              loginUser({ email: "testUser@test.com", password: "secret" })
+            )
+          }
+        >
+          {isLoading ? "Loading..." : "demo app"}
+        </button>
 
-                <button
-                    type="button"
-                    onClick={toggleMember}
-                    className='member-btn'
-                >
-                    {values.isMember ? 'Register' : 'Login'}
-                </button>
-            </p>
-        </form>
+        <p>
+          {values.isMember ? "Not a member yet?" : " Already a member?"}
+
+          <button type="button" onClick={toggleMember} className="member-btn">
+            {values.isMember ? "Register" : "Login"}
+          </button>
+        </p>
+      </form>
     </Wrapper>
-    );
-};
+  );
+}
 
 export default Register;
